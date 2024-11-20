@@ -12,7 +12,6 @@
 #ifndef C_PROPERTY_H
 #define C_PROPERTY_H
 
-
 template <typename T>
 class CProperty{
     private:
@@ -24,12 +23,11 @@ class CProperty{
         T MinValue;
     public:
         // Class constructor
-        CProperty(const T& value, const T& maxValue, const T& minValue);
+        CProperty(const T& value, const T& minValue, const T& maxValue);
         // Getter
         const T& get() const{};
         // Setter
         void set(const T& newValue) {};
 };
-
 
 #endif // C_PROPERTY_H

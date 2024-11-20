@@ -2,10 +2,11 @@
  * Project:         Interpolation-Based Simulator                                   *
  *                                                                                  *
  * Author:          James Guest                                                     *
- * File:            state.cpp                                                       *
- * Purpose:         To define a state class                                         *
- * Description:     This defines a state class, with getters and setters, and a     *
- *                  property template to implement the getters/setters              *
+ * File:            CProperty.cpp                                                   *
+ * Purpose:         To define a property template class                             *
+ * Description:     This defines a template class to be used as properties with     *
+ *                  .get() and .set() methods. Must be able to evaluate with "<"    *
+ *                  and ">" operators for max/min values.                           *
  ***********************************************************************************/
  
 /*********************************** INCLUDES **************************************/
@@ -29,7 +30,7 @@
  * Description:     Property class constructor
  */
 template <typename T>
-CProperty<T>::CProperty(const T& value, const T& maxValue, const T& minValue):Value(value), MaxValue(maxValue), MinValue(minValue) {};
+CProperty<T>::CProperty(const T& value, const T& minValue, const T& maxValue):Value(value), MaxValue(maxValue), MinValue(minValue) {};
 
 /*===========================================================================
  * Function:        CProperty<T>::get()
