@@ -27,9 +27,9 @@ class CProperty{
         // Class constructor
         CProperty(const T& value, const T& minValue, const T& maxValue);
         // Getter
-        const T& get() const{};
+        const T& get() const;
         // Setter
-        void set(const T& newValue) {};
+        void set(const T& newValue);
 };
 
 #endif // C_PROPERTY_H

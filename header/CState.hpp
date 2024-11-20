@@ -11,34 +11,27 @@
 #ifndef C_STATE_H
 #define C_STATE_H
 
+#include "CLinearCoordinate.hpp"
+#include "CSphericalCoordinate.hpp"
 
-#include <vector>
-#include <tuple>
-
-class CComplexMatrix {
-private:
-  std::vector<std::vector<CComplexNumber>> Matrix;
-  int numRows;
-  int numCols;
+class CState {
 public:
+  // Values of X, Y, Z
+  CLinearCoordinate LinearPositions;
+  // Values of XDot, YDot, ZDot
+  CLinearCoordinate LinearVelocities;
+  // Values of Theta, Phi, Psi
+  CSphericalCoordinate AngularPositions;
+  // Values of ThetaDot, PhiDot, PsiDot
+  CSphericalCoordinate AngularVelocities;
   //Default Constructor
-  CComplexMatrix();
-  //Constructor for specific size
-  CComplexMatrix(int row, int col);
-  //Constructor
-  CComplexMatrix(std::vector<std::vector<CComplexNumber>> matrix);
-  //Method to write any one element with a new complex number
-  bool WriteElement(int row, int column, CComplexNumber value);
-  //Method to read an element of the matrix
-  CComplexNumber ReadElement(int row, int column) const;
-  //Method to overload the * operator for matrix multiplication
-  CComplexMatrix operator*(const CComplexMatrix& argument);
-  //Method to get the size of the matrix
-  std::tuple<int,int> GetSize();
-  //Method to display the matrix
-  bool Display();
-  //Destructor
-  ~CComplexMatrix();
+  CState();
+  //Linear Constructor (3-axis/6-var)
+  CState(double x, double y, double z, double xDot, double yDot, double zDot);
+  //Full Constructor (6-axis/12-var)
+  CState(double x, double y, double z, double xDot, double yDot, double zDot,
+         double theta, double phi, double psi, double thetaDot, double phiDot, double psiDot);
+
 };
 
 

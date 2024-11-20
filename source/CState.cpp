@@ -13,48 +13,61 @@
 #include <iostream>
 
 //Internal Headers
-// #include ""
+#include "../header/CState.hpp"
 
 /************************************ GLOBALS **************************************/
 
 
 /***************************** FUNCTIONS DEFINITIONS********************************/
+
 /*===========================================================================
- * Function:        main
- * Arguments:       int argc - Number of command line arguments 
-                    char *argv[] - Array of command line arguments 
- * Returns:         int - 0 on success, 1 on fail
- * Description:     main function
+ * Function:        CState::CState()
+ * Arguments:       none 
+ * Returns:         none
+ * Description:     Default constructor
  */
-template <typename T>
-class CProperty{
-    private:
-        T Value;
-        T MaxValue;
-        T MinValue;
-    public:
-        CProperty(const T& value, const T& maxValue, const T& maxValue) : 
-                                            Value(value), MaxValue(maxValue), MinValue(minValue) {};
-        T get() const{
-            return Value;
-        }
-        void set(const T& newValue) {
-            if((newValue > this->MaxValue) || (newValue < this->MinValue)) {
-                throw std::out_of_range;
-            } else {
-                this->Value = newValue;
-                return;
-            }
-        }
+CState::CState(): LinearPositions(CLinearCoordinate(0, 0, 0)), 
+                    LinearVelocities(CLinearCoordinate(0, 0, 0)),
+                    AngularPositions(CSphericalCoordinate(0, 0, 0)), 
+                    AngularVelocities(CSphericalCoordinate(0, 0, 0)) {}
 
-};
+/*===========================================================================
+ * Function:        CState::CState()
+ * Arguments:       x    - initial X value
+ *                  y    - initial Y value
+ *                  z    - initial Z value
+ *                  xDot - initial XDot value
+ *                  yDot - initial YDot value
+ *                  zDot - initial ZDot value 
+ * Returns:         none
+ * Description:     Default constructor
+ */
+CState::CState(double x, double y, double z, double xDot, double yDot, double zDot):
+                    LinearPositions(CLinearCoordinate(x, y, z)), 
+                    LinearVelocities(CLinearCoordinate(xDot, yDot, zDot)),
+                    AngularPositions(CSphericalCoordinate(0, 0, 0)), 
+                    AngularVelocities(CSphericalCoordinate(0, 0, 0)) {}
 
-
-
-int main(int argc, char *argv[]){
-
-  
-  return 0;
-}
-
-
+/*===========================================================================
+ * Function:        CState::CState()
+ * Arguments:       x - initial X value
+ *                  y - initial Y value
+ *                  z - initial Z value
+ *                  xDot - initial XDot value
+ *                  yDot - initial YDot value
+ *                  zDot - initial ZDot value 
+ *                  theta - inital Theta value
+ *                  phi - initial Phi value
+ *                  psi - initial Psi value
+ *                  thetaDot - initial ThetaDot value
+ *                  phiDot - initial PhiDot value
+ *                  psiDot - initial PsiDot value
+ * Returns:         none
+ * Description:     Default constructor
+ */
+CState::CState(double x, double y, double z, double xDot, double yDot, double zDot,
+                    double theta, double phi, double psi, double thetaDot, double phiDot, double psiDot):
+                    LinearPositions(CLinearCoordinate(x, y, z)), 
+                    LinearVelocities(CLinearCoordinate(xDot, yDot, zDot)),
+                    AngularPositions(CSphericalCoordinate(theta, phi, psi)), 
+                    AngularVelocities(CSphericalCoordinate(thetaDot, phiDot, psiDot)) {}

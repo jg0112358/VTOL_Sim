@@ -12,9 +12,12 @@
 /*********************************** INCLUDES **************************************/
 //Libraries
 #include <iostream>
+#include <format>
+#include <string>
+#include <stdexcept>
 
 //Internal Headers
-#include "CProperty.hpp"
+#include "../header/CProperty.hpp"
 
 /************************************ GLOBALS **************************************/
 
@@ -53,9 +56,14 @@ const T& CProperty<T>::get() const{
 template <typename T>
 void CProperty<T>::set(const T& newValue) {
     if((newValue > this->MaxValue) || (newValue < this->MinValue)) {
-        throw std::out_of_range;
+        std::string message = std::format("Set a value within the bounds of {} and {}", 
+                                                    this->MinValue , this->MaxValue);
+        throw std::out_of_range(message);
     } else {
         this->Value = newValue;
         return;
     }
 }
+
+//Add support for all types desired:
+template class CProperty<double>;
