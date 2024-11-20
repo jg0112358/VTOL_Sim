@@ -13,12 +13,35 @@
 #include <iostream>
 
 //Internal Headers
-// #include ""
+#include "CProperty.hpp"
 
 /************************************ GLOBALS **************************************/
 
 
 /***************************** FUNCTIONS DEFINITIONS********************************/
+
+/*===========================================================================
+ * Function:        CProperty<T>::CProperty
+ * Arguments:       const T& value - initialization value to set in CProperty 
+                    const T& maxValue - max value for setter
+                    const T& minValue - min value for setter
+ * Returns:         none
+ * Description:     Property class constructor
+ */
+template <typename T>
+CProperty<T>::CProperty(const T& value, const T& maxValue, const T& minValue):Value(value), MaxValue(maxValue), MinValue(minValue) {};
+
+/*===========================================================================
+ * Function:        CProperty<T>::get()
+ * Arguments:       none
+ * Returns:         T Value - the value stored in property
+ * Description:     main function
+ */
+template <typename T>
+const T& CProperty<T>::get() const{
+    return this->Value;
+}
+
 /*===========================================================================
  * Function:        main
  * Arguments:       int argc - Number of command line arguments 
@@ -27,24 +50,11 @@
  * Description:     main function
  */
 template <typename T>
-class CProperty{
-    private:
-        T Value;
-        T MaxValue;
-        T MinValue;
-    public:
-        CProperty(const T& value, const T& maxValue, const T& maxValue) : 
-                                            Value(value), MaxValue(maxValue), MinValue(minValue) {};
-        T get() const{
-            return Value;
-        }
-        void set(const T& newValue) {
-            if((newValue > this->MaxValue) || (newValue < this->MinValue)) {
-                throw std::out_of_range;
-            } else {
-                this->Value = newValue;
-                return;
-            }
-        }
-
-};
+void CProperty<T>::set(const T& newValue) {
+    if((newValue > this->MaxValue) || (newValue < this->MinValue)) {
+        throw std::out_of_range;
+    } else {
+        this->Value = newValue;
+        return;
+    }
+}
