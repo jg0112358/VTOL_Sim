@@ -2,13 +2,13 @@
  * Project:         Interpolation-Based Simulator                                   *
  *                                                                                  *
  * Author:          James Guest                                                     *
- * File:            CCoord.hpp                                                      *
+ * File:            CLinearCoordinate.hpp                                           *
  * Purpose:         To define a coordinates class                                   *
  * Description:     This defines a class of three coordinate values.                *
  ***********************************************************************************/
 
-#ifndef C_COORD_H
-#define C_COORD_H
+#ifndef C_LINEAR_COORDINATE_H
+#define C_LINEAR_COORDINATE_H
 
 #include "CProperty.hpp"
 
@@ -25,4 +25,4 @@ class CLinearCoordinate{
 };
 
 
-#endif // C_COORD_H
+#endif // C_LINEAR_COORDINATE_H

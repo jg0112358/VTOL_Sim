@@ -22,6 +22,8 @@ class CProperty{
         // Min value when using set()
         T MinValue;
     public:
+        //Default constructor 
+        CProperty(){}
         // Class constructor
         CProperty(const T& value, const T& minValue, const T& maxValue);
         // Getter
