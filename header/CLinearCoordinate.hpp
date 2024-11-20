@@ -16,12 +16,18 @@ class CLinearCoordinate{
     public:
         // X-value
         CProperty<double> X;
-        // X-value
+        // Y-value
         CProperty<double> Y;
-        // X-value
+        // Z-value
         CProperty<double> Z;
+        //Default Constructor
+        CLinearCoordinate(){}
         //Constructor
         CLinearCoordinate(double x, double y, double z);
+        //Constructor with custom min/max
+        CLinearCoordinate(const CProperty<double>& x,
+                            const CProperty<double>& y,
+                            const CProperty<double>& z);
 };
 
 

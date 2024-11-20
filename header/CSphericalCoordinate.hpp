@@ -20,8 +20,14 @@ class CSphericalCoordinate{
         CProperty<double> Phi;
         // Psi-value
         CProperty<double> Psi;
-        //Constructor
+        // Default constructor
+        CSphericalCoordinate(){}
+        // Constructor
         CSphericalCoordinate(double theta, double phi, double psi);
+        // Constructor with CProperty types
+        CSphericalCoordinate(const CProperty<double>& theta, 
+                                const CProperty<double>& phi, 
+                                const CProperty<double>& psi);
 };
 
 

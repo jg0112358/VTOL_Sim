@@ -38,3 +38,18 @@ CSphericalCoordinate::CSphericalCoordinate(double theta, double phi, double psi)
 
 }
 
+/*===========================================================================
+ * Function:        CLinearCoordinate::CLinearCoordinate()
+ * Arguments:       CProperty<double> theta - Theta value
+ *                  CProperty<double> phi   - Phi value
+ *                  CProperty<double> psi   - Psi value
+ * Returns:         none      
+ * Description:     Linear Coordinate class constructor
+ */
+CSphericalCoordinate::CSphericalCoordinate(const CProperty<double>& theta, 
+                                            const CProperty<double>& phi, 
+                                            const CProperty<double>& psi){
+    this->Theta = theta;
+    this->Phi   = phi;
+    this->Psi   = psi;
+}

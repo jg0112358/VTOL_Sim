@@ -34,6 +34,26 @@ CLinearCoordinate::CLinearCoordinate(double x, double y, double z){
     this->X = CProperty(x, DBL_MIN, DBL_MAX);
     this->Y = CProperty(y, DBL_MIN, DBL_MAX);
     this->Z = CProperty(z, DBL_MIN, DBL_MAX);
+    
+    return;
+}
 
+/*===========================================================================
+ * Function:        CLinearCoordinate::CLinearCoordinate()
+ * Arguments:       CProperty<double> x - X value with min/max
+ *                  CProperty<double> y - Y value with min/max
+ *                  CProperty<double> z - Z value with min/max
+ * Returns:         none      
+ * Description:     Linear Coordinate class constructor with custom min/max 
+ *                  set values
+ */
+CLinearCoordinate::CLinearCoordinate(const CProperty<double>& x,
+                                const CProperty<double>& y,
+                                const CProperty<double>& z){
+    this->X = x;
+    this->Y = y;
+    this->Z = z;
+    
+    return;
 }
 
