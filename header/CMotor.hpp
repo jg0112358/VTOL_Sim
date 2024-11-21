@@ -23,6 +23,8 @@ class CMotor{
         // Angle of motor thrust vector relative to inertial reference frame (deg)
         CSphericalCoordinate RelativeAngularPosition;
     public:
+        //Default Motor Constructor
+        CMotor(){}
         // Motor Constructor (value based)
         CMotor(double initialThrust, double x, double y, double z, double initialAngle);
         // Motor Constructor (property based)
