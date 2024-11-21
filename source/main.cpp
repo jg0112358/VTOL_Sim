@@ -17,7 +17,8 @@
 #include <iostream>
 
 //Internal Headers
-// #include ""
+#include "../header/CState.hpp"
+#include "../header/CInputVector.hpp"
 
 /************************************ GLOBALS **************************************/
 
@@ -31,9 +32,21 @@
  * Description:     main function
  */
 int main(int argc, char *argv[]){
-
+  CLinearCoordinate Lin = CLinearCoordinate(1,2,3);
   
-  return 0;
+  double a = Lin.X.get();
+  a=5;
+  Lin.Y.set(a);
+
+  CState state = CState();
+
+  double b=state.LinearPositions.X.get();
+
+  CInputVector inputs = CInputVector(CControlSurfaces(), CMotorList());
+
+  double c = inputs.ControlSurfaces.ElevatorAngle.get();
+  
+  return (int)(b+c);
 }
 
 

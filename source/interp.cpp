@@ -20,6 +20,7 @@
 
 
 /***************************** FUNCTIONS DEFINITIONS********************************/
+
 /*===========================================================================
  * Function:        main
  * Arguments:       int argc - Number of command line arguments 
@@ -27,10 +28,5 @@
  * Returns:         int - 0 on success, 1 on fail
  * Description:     main function
  */
-int main(int argc, char *argv[]){
-
-  
-  return 0;
-}
 
 

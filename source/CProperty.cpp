@@ -39,7 +39,7 @@ CProperty<T>::CProperty(const T& value, const T& minValue, const T& maxValue):Va
  * Function:        CProperty<T>::get()
  * Arguments:       none
  * Returns:         T Value - the value stored in property
- * Description:     main function
+ * Description:     getter
  */
 template <typename T>
 const T& CProperty<T>::get() const{
@@ -47,11 +47,10 @@ const T& CProperty<T>::get() const{
 }
 
 /*===========================================================================
- * Function:        main
- * Arguments:       int argc - Number of command line arguments 
-                    char *argv[] - Array of command line arguments 
+ * Function:        CProperty<T>::set()
+ * Arguments:       const T& newValue - new value to set in CProperty
  * Returns:         int - 0 on success, 1 on fail
- * Description:     main function
+ * Description:     setter with min/max limits
  */
 template <typename T>
 void CProperty<T>::set(const T& newValue) {
