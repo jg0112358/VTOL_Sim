@@ -416,7 +416,7 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
     S6DegResultant netResult;
     netResult.forceX = absoluteAeroResult.forceX + absoluteMotorResult.forceX;
     netResult.forceY = absoluteAeroResult.forceY + absoluteMotorResult.forceY;
-    netResult.forceZ = absoluteAeroResult.forceZ + absoluteMotorResult.forceZ;
+    netResult.forceZ = absoluteAeroResult.forceZ + absoluteMotorResult.forceZ - 9.81 * mass;
     netResult.momentX = absoluteAeroResult.momentX + absoluteMotorResult.momentX;
     netResult.momentY = absoluteAeroResult.momentY + absoluteMotorResult.momentY;
     netResult.momentZ = absoluteAeroResult.momentZ + absoluteMotorResult.momentZ;
