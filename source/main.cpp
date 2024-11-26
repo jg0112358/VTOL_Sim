@@ -15,11 +15,14 @@
 /*********************************** INCLUDES **************************************/
 //Libraries
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 //Internal Headers
 #include "../header/CState.hpp"
 #include "../header/CInputVector.hpp"
 #include "../header/CDynamicsUpdater.hpp"
+#include "../header/CInputParser.hpp"
 
 /************************************ GLOBALS **************************************/
 
@@ -33,55 +36,64 @@
  * Description:     main function
  */
 int main(int argc, char *argv[]){
+  if (argc != 2){
+    std::cout << "please input the inputseries.csv filename\n";
+    return 0;
+  }
 
   CState state = CState();
-  CInputVector inputs = CInputVector(CControlSurfaces(), CMotorList(CMotor(9.81,0.35,1,0,90), CMotor(9.81,0.35,-1,0,90), CMotor(9.81,-0.7,0,0,90)));
+  std::vector<CInputVector> inputArray;
+  CInputParser::ParseInputs(argv[1], inputArray);
 
-  std::cout << "THE STATE IS: \n";
-  std::cout << "Time: " << state.time.get() << std::endl;
-  std::cout << "X: " << state.LinearPositions.X.get() << " | Y: " 
-                    << state.LinearPositions.Y.get() << " | Z: " << state.LinearPositions.Z.get() << std::endl;
-  std::cout << "Xdot: " << state.LinearVelocities.X.get() << " | Ydot: " 
-                    << state.LinearVelocities.Y.get() << " | Zdot: " << state.LinearVelocities.Z.get() << std::endl;
-  std::cout << "Pitch: " << state.AngularPositions.Pitch.get() << " | Roll: " 
-                    << state.AngularPositions.Roll.get() << " | Yaw: " << state.AngularPositions.Yaw.get() << std::endl;
-  std::cout << "PitchDot: " << state.AngularVelocities.Pitch.get() << " | RollDot: " 
-                    << state.AngularVelocities.Roll.get() << " | YawDot: " << state.AngularVelocities.Yaw.get() << std::endl;
-  std::cout << "THE INPUT IS: \n";
-  std::cout << "Left: " << inputs.ControlSurfaces.LeftAileronAngle.get() 
-                    << " | Right: " << inputs.ControlSurfaces.RightAileronAngle.get() << std::endl;
-  std::cout << "Elev: " << inputs.ControlSurfaces.ElevatorAngle.get() 
-                    << " | Rudd: " << inputs.ControlSurfaces.RudderAngle.get() << std::endl;
-  std::cout << "FLMotor: " << inputs.Motors.FrontLeft.Thrust.get() 
-                    << " | FRMotor: " << inputs.Motors.FrontRight.Thrust.get() 
-                    << " | RearMotor: " << inputs.Motors.Rear.Thrust.get() << std::endl;
-  std::cout << "FLMotor(deg): " << inputs.Motors.FrontLeft.RelativeAngularPosition.Pitch.get() 
-                    << " | FRMotor(deg): " << inputs.Motors.FrontRight.RelativeAngularPosition.Pitch.get() << std::endl;
+  std::cout << "\n System Initialized, running execution... \n\n";
+  
+  std::cout << "THE INPUT, STATE IS: \n";
+  std::cout << "Time, " << "Left, " << "Right, " << "Elev, " <<  "Rudd, " << "FLMotor(N), " << "FRMotor(N), " << "RearMotor(N), " 
+              << "FLMotor(deg), " << "FRMotor(deg), " << "X, " <<  "Y, " << "Z, " << "Xdot, " << "Ydot, " << "Zdot, " 
+              <<  "Pitch, " <<  "Roll, " << "Yaw, " << "PitchDot, " << "RollDot, " << "YawDot" << std::endl;
 
-  for (int i = 0; i < 500; i++){
-    std::cout << "\n Updating States... \n\n";
-    CDynamicsUpdater::UpdateStates(inputs, state);
+  int runLength = inputArray.size();
+  
+  // file pointer
+  std::fstream fout;
+  std::string outputFileName = "output_file.csv";
 
-    std::cout << "THE STATE IS: \n";
-    std::cout << "Time: " << state.time.get() << std::endl;
-    std::cout << "X: " << state.LinearPositions.X.get() << " | Y: " 
-                      << state.LinearPositions.Y.get() << " | Z: " << state.LinearPositions.Z.get() << std::endl;
-    std::cout << "Xdot: " << state.LinearVelocities.X.get() << " | Ydot: " 
-                      << state.LinearVelocities.Y.get() << " | Zdot: " << state.LinearVelocities.Z.get() << std::endl;
-    std::cout << "Pitch: " << state.AngularPositions.Pitch.get() << " | Roll: " 
-                      << state.AngularPositions.Roll.get() << " | Yaw: " << state.AngularPositions.Yaw.get() << std::endl;
-    std::cout << "PitchDot: " << state.AngularVelocities.Pitch.get() << " | RollDot: " 
-                      << state.AngularVelocities.Roll.get() << " | YawDot: " << state.AngularVelocities.Yaw.get() << std::endl;
-    std::cout << "THE INPUT IS: \n";
-    std::cout << "Left: " << inputs.ControlSurfaces.LeftAileronAngle.get() 
-                      << " | Right: " << inputs.ControlSurfaces.RightAileronAngle.get() << std::endl;
-    std::cout << "Elev: " << inputs.ControlSurfaces.ElevatorAngle.get() 
-                      << " | Rudd: " << inputs.ControlSurfaces.RudderAngle.get() << std::endl;
-    std::cout << "FLMotor: " << inputs.Motors.FrontLeft.Thrust.get() 
-                      << " | FRMotor: " << inputs.Motors.FrontRight.Thrust.get() 
-                      << " | RearMotor: " << inputs.Motors.Rear.Thrust.get() << std::endl;
-    std::cout << "FLMotor(deg): " << inputs.Motors.FrontLeft.RelativeAngularPosition.Pitch.get() 
-                      << " | FRMotor(deg): " << inputs.Motors.FrontRight.RelativeAngularPosition.Pitch.get() << std::endl;
+  // opens an existing csv file or creates a new file.
+  fout.open(outputFileName, std::ios::out | std::ios::app);
+
+  fout << "Time, " << "Left, " << "Right, " << "Elev, " <<  "Rudd, " << "FLMotor(N), " << "FRMotor(N), " << "RearMotor(N), " 
+            << "FLMotor(deg), " << "FRMotor(deg), " << "X, " <<  "Y, " << "Z, " << "Xdot, " << "Ydot, " << "Zdot, " 
+            <<  "Pitch, " <<  "Roll, " << "Yaw, " << "PitchDot, " << "RollDot, " << "YawDot" << std::endl;
+
+  for (int i = 0; i < runLength; i++){
+
+    CDynamicsUpdater::UpdateStates(inputArray[i], state);
+
+    std::cout << state.time.get() << ", " << inputArray[i].ControlSurfaces.LeftAileronAngle.get() << ", "
+              << inputArray[i].ControlSurfaces.RightAileronAngle.get() << ", "<< inputArray[i].ControlSurfaces.ElevatorAngle.get()  
+              << ", "<<  inputArray[i].ControlSurfaces.RudderAngle.get() << ", " << inputArray[i].Motors.FrontLeft.Thrust.get() << ", "
+              << inputArray[i].Motors.FrontRight.Thrust.get() << ", "<< inputArray[i].Motors.Rear.Thrust.get() << ", "
+              << inputArray[i].Motors.FrontLeft.RelativeAngularPosition.Pitch.get() << ", "
+              << inputArray[i].Motors.FrontRight.RelativeAngularPosition.Pitch.get() << ", "
+              << state.LinearPositions.X.get() << ", "<<  state.LinearPositions.Y.get() << ", "
+              << state.LinearPositions.Z.get() << ", "<< state.LinearVelocities.X.get() << ", "
+              << state.LinearVelocities.Y.get() << ", "<< state.LinearVelocities.Z.get() << ", "
+              << state.AngularPositions.Pitch.get() << ", "<<  state.AngularPositions.Roll.get() << ", "
+              << state.AngularPositions.Yaw.get() << ", "<< state.AngularVelocities.Pitch.get() << ", "
+              << state.AngularVelocities.Roll.get() << ", "<< state.AngularVelocities.Yaw.get() << std::endl;
+  
+    fout << state.time.get() << ", " << inputArray[i].ControlSurfaces.LeftAileronAngle.get() << ", "
+          << inputArray[i].ControlSurfaces.RightAileronAngle.get() << ", "<< inputArray[i].ControlSurfaces.ElevatorAngle.get()  
+          << ", "<<  inputArray[i].ControlSurfaces.RudderAngle.get() << ", " << inputArray[i].Motors.FrontLeft.Thrust.get() << ", "
+          << inputArray[i].Motors.FrontRight.Thrust.get() << ", "<< inputArray[i].Motors.Rear.Thrust.get() << ", "
+          << inputArray[i].Motors.FrontLeft.RelativeAngularPosition.Pitch.get() << ", "
+          << inputArray[i].Motors.FrontRight.RelativeAngularPosition.Pitch.get() << ", "
+          << state.LinearPositions.X.get() << ", "<<  state.LinearPositions.Y.get() << ", "
+          << state.LinearPositions.Z.get() << ", "<< state.LinearVelocities.X.get() << ", "
+          << state.LinearVelocities.Y.get() << ", "<< state.LinearVelocities.Z.get() << ", "
+          << state.AngularPositions.Pitch.get() << ", "<<  state.AngularPositions.Roll.get() << ", "
+          << state.AngularPositions.Yaw.get() << ", "<< state.AngularVelocities.Pitch.get() << ", "
+          << state.AngularVelocities.Roll.get() << ", "<< state.AngularVelocities.Yaw.get() << std::endl;
   }
  
   return 0;

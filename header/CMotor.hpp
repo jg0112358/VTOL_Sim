@@ -26,7 +26,7 @@ class CMotor{
         //Default Motor Constructor
         CMotor(){}
         // Motor Constructor (value based)
-        CMotor(double initialThrust, double x, double y, double z, double initialAngle);
+        CMotor(double initialThrust, double x, double y, double z, double initialAngle, bool fixed=false);
         // Motor Constructor (property based)
         CMotor(const CProperty<double>& thrust, const CLinearCoordinate& relativeLinearPosition,
                                             const CProperty<double>& angularPosition);

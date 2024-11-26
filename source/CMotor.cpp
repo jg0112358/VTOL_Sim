@@ -32,12 +32,12 @@ const double THETA_MAX = 90.0;
  * Returns:         none      
  * Description:     Motor Constructor (value based)
  */
-CMotor::CMotor(double initialThrust, double x, double y, double z, double initialAngle): 
+CMotor::CMotor(double initialThrust, double x, double y, double z, double initialAngle, bool fixed): 
     Thrust(CProperty<double>(initialThrust,0,100)),
     RelativeLinearPosition(CLinearCoordinate(CProperty<double>(x,x,x),
                                                 CProperty<double>(y,y,y),
                                                 CProperty<double>(z,z,z))),
-    RelativeAngularPosition(CSphericalCoordinate(CProperty<double>(initialAngle,0,90), 
+    RelativeAngularPosition(CSphericalCoordinate(fixed ? CProperty<double>(initialAngle,initialAngle,initialAngle) : CProperty<double>(initialAngle,0,90), 
                                                             CProperty<double>(0,0,0), 
                                                             CProperty<double>(0,0,0))) 
 {}

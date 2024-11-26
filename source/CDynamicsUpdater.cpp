@@ -417,6 +417,9 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
     netResult.forceX = absoluteAeroResult.forceX + absoluteMotorResult.forceX;
     netResult.forceY = absoluteAeroResult.forceY + absoluteMotorResult.forceY;
     netResult.forceZ = absoluteAeroResult.forceZ + absoluteMotorResult.forceZ - 9.81 * mass;
+    if (netResult.forceZ < 0 && currentState.LinearPositions.Z.get() <= 0){
+        netResult.forceZ = 0;
+    } 
     netResult.momentX = absoluteAeroResult.momentX + absoluteMotorResult.momentX;
     netResult.momentY = absoluteAeroResult.momentY + absoluteMotorResult.momentY;
     netResult.momentZ = absoluteAeroResult.momentZ + absoluteMotorResult.momentZ;
@@ -450,7 +453,6 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
     nextState.AngularVelocities.Pitch.set(newPitchDot);
     double newRollDot = currentState.AngularVelocities.Roll.get() - netResult.momentX / Ixx * timeDelta;
     nextState.AngularVelocities.Roll.set(newRollDot);
-    std::cout << "TEST\n";
     double newYawDot = currentState.AngularVelocities.Yaw.get() - netResult.momentZ / Izz * timeDelta;
     nextState.AngularVelocities.Yaw.set(newYawDot);
 

@@ -114,3 +114,6 @@ _deps
 build/
 sdkconfig
 sdkconfig.old
+
+#### Project Specifics
+*.csv

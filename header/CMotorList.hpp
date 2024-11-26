@@ -15,11 +15,11 @@
 class CMotorList{
     public:
         // Front Left
-        CMotor FrontLeft;
+        CMotor FrontLeft = CMotor(0,0.35,1,0,90);
         // Front Right
-        CMotor FrontRight;
+        CMotor FrontRight = CMotor(0,0.35,-1,0,90);
         //Rear
-        CMotor Rear;
+        CMotor Rear = CMotor(0,-0.7,0,0,90, true);
     public:
         // Default Motor List Constructor
         CMotorList(){}
