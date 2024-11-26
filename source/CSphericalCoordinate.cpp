@@ -17,39 +17,38 @@
 
 
 /************************************ GLOBALS **************************************/
-const double ANGULAR_MIN = 0.0;
-const double ANGULAR_MAX = 360.0;
+
 
 /***************************** FUNCTIONS DEFINITIONS********************************/
 
 /*===========================================================================
  * Function:        CLinearCoordinate::CLinearCoordinate()
- * Arguments:       double theta - Theta value
- *                  double phi   - Phi value
- *                  double psi   - Psi value
+ * Arguments:       double pitch - Theta value
+ *                  double roll   - Phi value
+ *                  double yaw   - Psi value
  * Returns:         none      
  * Description:     Linear Coordinate class constructor
  */
-CSphericalCoordinate::CSphericalCoordinate(double theta, double phi, double psi){
+CSphericalCoordinate::CSphericalCoordinate(double pitch, double roll, double yaw){
     //Setting with DBL_MIN and DBL_MAX since we are not imposing setter restrictions on this one
-    this->Theta = CProperty(theta, ANGULAR_MIN, ANGULAR_MAX);
-    this->Phi   = CProperty(phi, ANGULAR_MIN, ANGULAR_MAX);
-    this->Psi   = CProperty(psi, ANGULAR_MIN, ANGULAR_MAX);
+    this->Pitch = CProperty(pitch, ANGULAR_MIN, ANGULAR_MAX);
+    this->Roll   = CProperty(roll, ANGULAR_MIN, ANGULAR_MAX);
+    this->Yaw   = CProperty(yaw, ANGULAR_MIN, ANGULAR_MAX);
 
 }
 
 /*===========================================================================
  * Function:        CLinearCoordinate::CLinearCoordinate()
- * Arguments:       CProperty<double> theta - Theta value
- *                  CProperty<double> phi   - Phi value
- *                  CProperty<double> psi   - Psi value
+ * Arguments:       CProperty<double> pitch - Theta value
+ *                  CProperty<double> roll   - Phi value
+ *                  CProperty<double> yaw   - Psi value
  * Returns:         none      
  * Description:     Linear Coordinate class constructor
  */
-CSphericalCoordinate::CSphericalCoordinate(const CProperty<double>& theta, 
-                                            const CProperty<double>& phi, 
-                                            const CProperty<double>& psi){
-    this->Theta = theta;
-    this->Phi   = phi;
-    this->Psi   = psi;
+CSphericalCoordinate::CSphericalCoordinate(const CProperty<double>& pitch, 
+                                            const CProperty<double>& roll, 
+                                            const CProperty<double>& yaw){
+    this->Pitch = pitch;
+    this->Roll   = roll;
+    this->Yaw   = yaw;
 }

@@ -11,18 +11,20 @@
 #ifndef C_STATE_H
 #define C_STATE_H
 
+#include <cfloat>
 #include "CLinearCoordinate.hpp"
 #include "CSphericalCoordinate.hpp"
 
 class CState {
 public:
+  CProperty<double> time = CProperty<double>(0,0,DBL_MAX);
   // Values of X, Y, Z
   CLinearCoordinate LinearPositions;
-  // Values of XDot, YDot, ZDot
+  // Values of XDot, YDot, ZDot (Absolute Reference Frame)
   CLinearCoordinate LinearVelocities;
-  // Values of Theta, Phi, Psi
+  // Values of Pitch, Roll, Yaw (Pitch and Roll relative to traveling reference frame, Yaw relative to absolute)
   CSphericalCoordinate AngularPositions;
-  // Values of ThetaDot, PhiDot, PsiDot
+  // Values of PitchDot, RollDot, YawDot
   CSphericalCoordinate AngularVelocities;
   //Default Constructor
   CState();

@@ -55,7 +55,7 @@ const T& CProperty<T>::get() const{
 template <typename T>
 void CProperty<T>::set(const T& newValue) {
     if((newValue > this->MaxValue) || (newValue < this->MinValue)) {
-        std::string message = std::format("Set a value within the bounds of {} and {}", 
+        std::string message = std::format("CProperty Set Error: Set a value within the bounds of {} and {}", 
                                                     this->MinValue , this->MaxValue);
         throw std::out_of_range(message);
     } else {

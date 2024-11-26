@@ -95,6 +95,15 @@ int main() {
     double LEFT, RIGHT, ELEVATOR, RUDDER, ALPHA, CLIFT, CDRAG, CSIDEFORCE, CROLL, CPITCH, CYAW;
     std::ostringstream sql_stream;
 
+    bool repeatsymmetry = false;
+    int asymmetryCount = 0;
+    int validRowCount = 0;
+    int repeatedLines = 0;
+    int totalFiles = 0;
+
+    sqlite3_stmt *stmt;
+    const char *sql_INSERT = "INSERT OR REPLACE INTO FLOW5DATA (ID, LEFT, RIGHT, ELEVATOR, RUDDER, ALPHA, CLIFT, CDRAG, CSIDEFORCE, CROLL, CPITCH, CYAW) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
 
     for(int ruddIndex = 0; ruddIndex < numFoils; ruddIndex++){
         for(int elevIndex = 0; elevIndex < numFoils; elevIndex++){
@@ -104,6 +113,11 @@ int main() {
                     if (RAilIndex < LAilIndex)
                     {
                         continue;
+                    }
+                    if (RAilIndex != LAilIndex){
+                        repeatsymmetry = true;
+                        asymmetryCount ++;
+                        
                     }
                     
                     // Set folder name to identify plane geometry
@@ -123,7 +137,8 @@ int main() {
                         std::cerr << "Error opening file!" << std::endl;
                         return 1;
                     } else {
-                        std::cout << "\n Successfully opened file: " << filePath << "\n";
+                        // std::cout << "\n Successfully opened file: " << filePath << "\n";
+                        totalFiles++;
                     }
 
                     bool validRowFound = false;
@@ -138,8 +153,10 @@ int main() {
                         iss >> firstToken;
 
                         // Check if the first token is a number (or row starts with space and then a number)
-                        if (!firstToken.empty() && (std::isdigit(firstToken[0]) || (firstToken[0] == '-' && std::isdigit(firstToken[1])))) {
+                        if (!firstToken.empty() && (std::isdigit(firstToken[0]) || (firstToken[0] == '-' && std::isdigit(firstToken[1]) ) ) ) {
                             validRowFound = true; // Found a valid row
+                            validRowCount++;
+                            if (repeatsymmetry){ repeatedLines++;}
                         }
 
                         if (validRowFound) {
@@ -173,71 +190,112 @@ int main() {
                             ELEVATOR = controlSurfaceAngles[elevIndex];
                             RUDDER = controlSurfaceAngles[ruddIndex];
                             
-
-                            /* Create SQL statement */
-                            sql_stream << "INSERT OR REPLACE INTO FLOW5DATA (ID, LEFT, RIGHT, ELEVATOR, RUDDER, ALPHA,"
-                                << "CLIFT, CDRAG, CSIDEFORCE, CROLL, CPITCH, CYAW) VALUES ("
-                                << ID << ", "
-                                << LEFT << ", "
-                                << RIGHT << ", "
-                                << ELEVATOR << ", "
-                                << RUDDER << ", "
-                                << ALPHA << ", "
-                                << CLIFT << ", "
-                                << CDRAG << ", "
-                                << CSIDEFORCE << ", "
-                                << CROLL << ", "
-                                << CPITCH << ", "
-                                << CYAW << ");";
-
-                            const char* sql = sql_stream.str().c_str();
-                            /* Execute SQL statement */
-                            rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
-                            
-                            
-                            if( rc != SQLITE_OK ){
-                                fprintf(stderr, "\n ###########SQL error: %s\n", zErrMsg);
-                                std::cout << "Error issued for: " << "\"";
-                                fprintf(stdout, sql);
-                                std::cout << "\"\n";
-                                errorCount ++;
-                            } else {
-                                fprintf(stdout, sql);
-                                std::cout<<"\n";
-                                // std::cout << "Records created for: " << "INSERT OR REPLACE INTO FLOW5DATA (ID, LEFT, RIGHT, ELEVATOR, RUDDER, ALPHA,"
-                                // << "CLIFT, CDRAG, CSIDEFORCE, CROLL, CPITCH, CYAW) VALUES ("
-                                // << ID << ", "
-                                // << LEFT << ", "
-                                // << RIGHT << ", "
-                                // << ELEVATOR << ", "
-                                // << RUDDER << ", "
-                                // << ALPHA << ", "
-                                // << CLIFT << ", "
-                                // << CDRAG << ", "
-                                // << CSIDEFORCE << ", "
-                                // << CROLL << ", "
-                                // << CPITCH << ", "
-                                // << CYAW << "); \n";
+                            // Prepare the statement
+                            rc = sqlite3_prepare_v2(db, sql_INSERT, -1, &stmt, 0);
+                            if (rc != SQLITE_OK) {
+                                fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
+                                return 1;
                             }
 
+                            // Bind values and execute the statement for each row    
+                            sqlite3_bind_int(stmt, 1, ID);
+                            sqlite3_bind_double(stmt, 2, LEFT);
+                            sqlite3_bind_double(stmt, 3, RIGHT);
+                            sqlite3_bind_double(stmt, 4, ELEVATOR);
+                            sqlite3_bind_double(stmt, 5, RUDDER);
+                            sqlite3_bind_double(stmt, 6, ALPHA);
+                            sqlite3_bind_double(stmt, 7, CLIFT);
+                            sqlite3_bind_double(stmt, 8, CDRAG);
+                            sqlite3_bind_double(stmt, 9, CSIDEFORCE);
+                            sqlite3_bind_double(stmt, 10, CROLL);
+                            sqlite3_bind_double(stmt, 11, CPITCH);
+                            sqlite3_bind_double(stmt, 12, CYAW);   
+
+
+
+      
+                            /* Execute SQL statement */
+                            rc = sqlite3_step(stmt);
+                            if (rc != SQLITE_DONE) {
+                                fprintf(stderr, "Execution failed: %s\n", sqlite3_errmsg(db));
+                                errorCount ++;
+                            }
+                        
+
                             // reset row validation
-                            sql_stream.str("");
-                            sql_stream.clear();
+                            sqlite3_reset(stmt);  // Reset the statement for the next execution
                             validRowFound = false;
                             ID++;
+
+                            if (repeatsymmetry){
+                                ALPHA = extractedNumbers[0];
+                                CLIFT = extractedNumbers[1];
+                                CDRAG = extractedNumbers[2];
+                                CSIDEFORCE = -1 * extractedNumbers[3];
+                                CPITCH = extractedNumbers[4];
+                                CROLL = -1 * extractedNumbers[5];
+                                CYAW = -1 * extractedNumbers[6];
+                                
+                                LEFT = controlSurfaceAngles[RAilIndex];
+                                RIGHT = controlSurfaceAngles[LAilIndex];
+                                ELEVATOR = controlSurfaceAngles[elevIndex];
+                                RUDDER = -1 * controlSurfaceAngles[ruddIndex];
+                                
+                                // Prepare the statement
+                                rc = sqlite3_prepare_v2(db, sql_INSERT, -1, &stmt, 0);
+                                if (rc != SQLITE_OK) {
+                                    fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
+                                    return 1;
+                                }
+
+                                // Bind values to the statement   
+                                sqlite3_bind_int(stmt, 1, ID);
+                                sqlite3_bind_double(stmt, 2, LEFT);
+                                sqlite3_bind_double(stmt, 3, RIGHT);
+                                sqlite3_bind_double(stmt, 4, ELEVATOR);
+                                sqlite3_bind_double(stmt, 5, RUDDER);
+                                sqlite3_bind_double(stmt, 6, ALPHA);
+                                sqlite3_bind_double(stmt, 7, CLIFT);
+                                sqlite3_bind_double(stmt, 8, CDRAG);
+                                sqlite3_bind_double(stmt, 9, CSIDEFORCE);
+                                sqlite3_bind_double(stmt, 10, CROLL);
+                                sqlite3_bind_double(stmt, 11, CPITCH);
+                                sqlite3_bind_double(stmt, 12, CYAW);   
+
+        
+                                /* Execute SQL statement */
+                                rc = sqlite3_step(stmt);
+                                if (rc != SQLITE_DONE) {
+                                    fprintf(stderr, "Execution failed: %s\n", sqlite3_errmsg(db));
+                                    errorCount ++;
+                                }
+                            
+
+                                // reset row validation
+                                sqlite3_reset(stmt);  // Reset the statement for the next execution
+                                validRowFound = false;
+                                ID++;
+                            }
+
+                            
                         }
                     }
-
+                    repeatsymmetry = false;
                     file.close();
                 }
             }
         }
     }
 
+    sqlite3_finalize(stmt);
     
     sqlite3_close(db);
 
-    std::cout << "\n\n THERE WERE " << errorCount << " ERRORS IN THIS RUN \n";
+    std::cout << "\n\n THERE WERE " << errorCount << " ERRORS IN THIS RUN, OUT OF "<< ID << " LINES LOADED\n";
+    std::cout << " Number of Assymetrical Mirrored Files: " << asymmetryCount <<std::endl;
+    std::cout << " Total Number of Files: " << totalFiles <<std::endl;
+    std::cout << " Number of Valid Lines: " << validRowCount <<std::endl;
+    std::cout << " Number of Mirrored Lines: " << repeatedLines <<std::endl;
 
     return 0;
 }
@@ -257,4 +315,62 @@ int main() {
 //    } else {
 //       fprintf(stdout, "Operation done successfully\n");
 //    }
+
+
+// if (repeatsymmetry){
+                            //     ALPHA = extractedNumbers[0];
+                            //     CLIFT = extractedNumbers[1];
+                            //     CDRAG = extractedNumbers[2];
+                            //     CSIDEFORCE = -1 * extractedNumbers[3];
+                            //     CPITCH = extractedNumbers[4];
+                            //     CROLL = -1 * extractedNumbers[5];
+                            //     CYAW = -1 * extractedNumbers[6];
+                                
+                            //     LEFT = controlSurfaceAngles[RAilIndex];
+                            //     RIGHT = controlSurfaceAngles[LAilIndex];
+                            //     ELEVATOR = controlSurfaceAngles[elevIndex];
+                            //     RUDDER = -1 * controlSurfaceAngles[ruddIndex];
+                                
+
+                            //     /* Create SQL statement */
+                            //     sql_stream << "INSERT OR REPLACE INTO FLOW5DATA (\"ID\", \"LEFT\", \"RIGHT\", \"ELEVATOR\", \"RUDDER\", \"ALPHA\","
+                            //         << "\"CLIFT\", \"CDRAG\", \"CSIDEFORCE\", \"CROLL\", \"CPITCH\", \"CYAW\") VALUES ("
+                            //         << ID << ", "
+                            //         << LEFT << ", "
+                            //         << RIGHT << ", "
+                            //         << ELEVATOR << ", "
+                            //         << RUDDER << ", "
+                            //         << ALPHA << ", "
+                            //         << CLIFT << ", "
+                            //         << CDRAG << ", "
+                            //         << CSIDEFORCE << ", "
+                            //         << CROLL << ", "
+                            //         << CPITCH << ", "
+                            //         << CYAW << ");";
+
+                            //     const char* sql = sql_stream.str().c_str();
+                            //     /* Execute SQL statement */
+                            //     rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+                                
+                                
+                            //     if( rc != SQLITE_OK ){
+                            //         fprintf(stderr, "\n ###########SQL error: %s\n", zErrMsg);
+                            //         std::cout << "Error issued for: " << "\"";
+                            //         fprintf(stdout, sql);
+                            //         std::cout << "\"\n";
+                            //         std::cout << "Error while parsing: " << filePath << std::endl;
+                            //         std::cout << "Error inside if(repeatsymmetry) \n";
+                            //         errorCount ++;
+                            //     } else {
+                            //         // fprintf(stdout, sql);
+                            //         // std::cout<<"\n";
+                            //     }
+
+                            //     // reset row validation
+                            //     sql_stream.str(" ");
+                            //     sql_stream.clear();
+                            //     validRowFound = false;
+                            //     ID++;
+                                
+                            // }
 

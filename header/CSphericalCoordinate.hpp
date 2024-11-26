@@ -14,20 +14,22 @@
 
 class CSphericalCoordinate{
     public:
+        static constexpr double ANGULAR_MIN = 0.0;
+        static constexpr double ANGULAR_MAX = 360.0;
         // Theta-value
-        CProperty<double> Theta;
+        CProperty<double> Pitch;
         // Phi-value
-        CProperty<double> Phi;
+        CProperty<double> Roll;
         // Psi-value
-        CProperty<double> Psi;
+        CProperty<double> Yaw;
         // Default constructor
         CSphericalCoordinate(){}
         // Constructor
-        CSphericalCoordinate(double theta, double phi, double psi);
+        CSphericalCoordinate(double pitch, double roll, double yaw);
         // Constructor with CProperty types
-        CSphericalCoordinate(const CProperty<double>& theta, 
-                                const CProperty<double>& phi, 
-                                const CProperty<double>& psi);
+        CSphericalCoordinate(const CProperty<double>& pitch, 
+                                const CProperty<double>& roll, 
+                                const CProperty<double>& yaw);
 };
 
 

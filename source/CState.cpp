@@ -11,6 +11,7 @@
 /*********************************** INCLUDES **************************************/
 //Libraries
 #include <iostream>
+#include <cfloat>
 
 //Internal Headers
 #include "../header/CState.hpp"
@@ -29,7 +30,9 @@
 CState::CState(): LinearPositions(CLinearCoordinate(0, 0, 0)), 
                     LinearVelocities(CLinearCoordinate(0, 0, 0)),
                     AngularPositions(CSphericalCoordinate(0, 0, 0)), 
-                    AngularVelocities(CSphericalCoordinate(0, 0, 0)) {}
+                    AngularVelocities(CSphericalCoordinate(CProperty<double>(0, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(0, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(0, -DBL_MAX, DBL_MAX))) {}
 
 /*===========================================================================
  * Function:        CState::CState()
@@ -46,8 +49,9 @@ CState::CState(double x, double y, double z, double xDot, double yDot, double zD
                     LinearPositions(CLinearCoordinate(x, y, z)), 
                     LinearVelocities(CLinearCoordinate(xDot, yDot, zDot)),
                     AngularPositions(CSphericalCoordinate(0, 0, 0)), 
-                    AngularVelocities(CSphericalCoordinate(0, 0, 0)) {}
-
+                    AngularVelocities(CSphericalCoordinate(CProperty<double>(0, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(0, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(0, -DBL_MAX, DBL_MAX))) {}
 /*===========================================================================
  * Function:        CState::CState()
  * Arguments:       x - initial X value
@@ -70,4 +74,6 @@ CState::CState(double x, double y, double z, double xDot, double yDot, double zD
                     LinearPositions(CLinearCoordinate(x, y, z)), 
                     LinearVelocities(CLinearCoordinate(xDot, yDot, zDot)),
                     AngularPositions(CSphericalCoordinate(theta, phi, psi)), 
-                    AngularVelocities(CSphericalCoordinate(thetaDot, phiDot, psiDot)) {}
+                    AngularVelocities(CSphericalCoordinate(CProperty<double>(thetaDot, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(phiDot, -DBL_MAX, DBL_MAX), 
+                                                            CProperty<double>(psiDot, -DBL_MAX, DBL_MAX))) {}

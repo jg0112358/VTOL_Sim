@@ -19,6 +19,7 @@
 //Internal Headers
 #include "../header/CState.hpp"
 #include "../header/CInputVector.hpp"
+#include "../header/CDynamicsUpdater.hpp"
 
 /************************************ GLOBALS **************************************/
 
@@ -32,21 +33,58 @@
  * Description:     main function
  */
 int main(int argc, char *argv[]){
-  CLinearCoordinate Lin = CLinearCoordinate(1,2,3);
-  
-  double a = Lin.X.get();
-  a=5;
-  Lin.Y.set(a);
 
   CState state = CState();
+  CInputVector inputs = CInputVector(CControlSurfaces(), CMotorList(CMotor(9.81,0.35,1,0,90), CMotor(9.81,0.35,-1,0,90), CMotor(9.81,-0.7,0,0,90)));
 
-  double b=state.LinearPositions.X.get();
+  std::cout << "THE STATE IS: \n";
+  std::cout << "Time: " << state.time.get() << std::endl;
+  std::cout << "X: " << state.LinearPositions.X.get() << " | Y: " 
+                    << state.LinearPositions.Y.get() << " | Z: " << state.LinearPositions.Z.get() << std::endl;
+  std::cout << "Xdot: " << state.LinearVelocities.X.get() << " | Ydot: " 
+                    << state.LinearVelocities.Y.get() << " | Zdot: " << state.LinearVelocities.Z.get() << std::endl;
+  std::cout << "Pitch: " << state.AngularPositions.Pitch.get() << " | Roll: " 
+                    << state.AngularPositions.Roll.get() << " | Yaw: " << state.AngularPositions.Yaw.get() << std::endl;
+  std::cout << "PitchDot: " << state.AngularVelocities.Pitch.get() << " | RollDot: " 
+                    << state.AngularVelocities.Roll.get() << " | YawDot: " << state.AngularVelocities.Yaw.get() << std::endl;
+  std::cout << "THE INPUT IS: \n";
+  std::cout << "Left: " << inputs.ControlSurfaces.LeftAileronAngle.get() 
+                    << " | Right: " << inputs.ControlSurfaces.RightAileronAngle.get() << std::endl;
+  std::cout << "Elev: " << inputs.ControlSurfaces.ElevatorAngle.get() 
+                    << " | Rudd: " << inputs.ControlSurfaces.RudderAngle.get() << std::endl;
+  std::cout << "FLMotor: " << inputs.Motors.FrontLeft.Thrust.get() 
+                    << " | FRMotor: " << inputs.Motors.FrontRight.Thrust.get() 
+                    << " | RearMotor: " << inputs.Motors.Rear.Thrust.get() << std::endl;
+  std::cout << "FLMotor(deg): " << inputs.Motors.FrontLeft.RelativeAngularPosition.Pitch.get() 
+                    << " | FRMotor(deg): " << inputs.Motors.FrontRight.RelativeAngularPosition.Pitch.get() << std::endl;
 
-  CInputVector inputs = CInputVector(CControlSurfaces(), CMotorList());
+  for (int i = 0; i < 500; i++){
+    std::cout << "\n Updating States... \n\n";
+    CDynamicsUpdater::UpdateStates(inputs, state);
 
-  double c = inputs.ControlSurfaces.ElevatorAngle.get();
-  
-  return (int)(b+c);
+    std::cout << "THE STATE IS: \n";
+    std::cout << "Time: " << state.time.get() << std::endl;
+    std::cout << "X: " << state.LinearPositions.X.get() << " | Y: " 
+                      << state.LinearPositions.Y.get() << " | Z: " << state.LinearPositions.Z.get() << std::endl;
+    std::cout << "Xdot: " << state.LinearVelocities.X.get() << " | Ydot: " 
+                      << state.LinearVelocities.Y.get() << " | Zdot: " << state.LinearVelocities.Z.get() << std::endl;
+    std::cout << "Pitch: " << state.AngularPositions.Pitch.get() << " | Roll: " 
+                      << state.AngularPositions.Roll.get() << " | Yaw: " << state.AngularPositions.Yaw.get() << std::endl;
+    std::cout << "PitchDot: " << state.AngularVelocities.Pitch.get() << " | RollDot: " 
+                      << state.AngularVelocities.Roll.get() << " | YawDot: " << state.AngularVelocities.Yaw.get() << std::endl;
+    std::cout << "THE INPUT IS: \n";
+    std::cout << "Left: " << inputs.ControlSurfaces.LeftAileronAngle.get() 
+                      << " | Right: " << inputs.ControlSurfaces.RightAileronAngle.get() << std::endl;
+    std::cout << "Elev: " << inputs.ControlSurfaces.ElevatorAngle.get() 
+                      << " | Rudd: " << inputs.ControlSurfaces.RudderAngle.get() << std::endl;
+    std::cout << "FLMotor: " << inputs.Motors.FrontLeft.Thrust.get() 
+                      << " | FRMotor: " << inputs.Motors.FrontRight.Thrust.get() 
+                      << " | RearMotor: " << inputs.Motors.Rear.Thrust.get() << std::endl;
+    std::cout << "FLMotor(deg): " << inputs.Motors.FrontLeft.RelativeAngularPosition.Pitch.get() 
+                      << " | FRMotor(deg): " << inputs.Motors.FrontRight.RelativeAngularPosition.Pitch.get() << std::endl;
+  }
+ 
+  return 0;
 }
 
 

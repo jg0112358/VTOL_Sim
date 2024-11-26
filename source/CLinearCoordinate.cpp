@@ -31,9 +31,9 @@
  */
 CLinearCoordinate::CLinearCoordinate(double x, double y, double z){
     //Setting with DBL_MIN and DBL_MAX since we are not imposing setter restrictions on this one
-    this->X = CProperty(x, DBL_MIN, DBL_MAX);
-    this->Y = CProperty(y, DBL_MIN, DBL_MAX);
-    this->Z = CProperty(z, DBL_MIN, DBL_MAX);
+    this->X = CProperty(x, -DBL_MAX, DBL_MAX);
+    this->Y = CProperty(y, -DBL_MAX, DBL_MAX);
+    this->Z = CProperty(z, -DBL_MAX, DBL_MAX);
     
     return;
 }
