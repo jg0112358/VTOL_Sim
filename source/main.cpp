@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
   std::string outputFileName = "output_file.csv";
 
   // opens an existing csv file or creates a new file.
-  fout.open(outputFileName, std::ios::out | std::ios::app);
+  fout.open(outputFileName, std::ios::out);
 
   fout << "Time, " << "Left, " << "Right, " << "Elev, " <<  "Rudd, " << "FLMotor(N), " << "FRMotor(N), " << "RearMotor(N), " 
             << "FLMotor(deg), " << "FRMotor(deg), " << "X, " <<  "Y, " << "Z, " << "Xdot, " << "Ydot, " << "Zdot, " 

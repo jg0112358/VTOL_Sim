@@ -14,8 +14,8 @@
 
 class CSphericalCoordinate{
     public:
-        static constexpr double ANGULAR_MIN = 0.0;
-        static constexpr double ANGULAR_MAX = 360.0;
+        static constexpr double ANGULAR_MIN = -180.0;
+        static constexpr double ANGULAR_MAX = 180.0;
         // Theta-value
         CProperty<double> Pitch;
         // Phi-value

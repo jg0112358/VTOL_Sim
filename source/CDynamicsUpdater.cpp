@@ -121,6 +121,7 @@ CAerodynamicCoefficients CDynamicsUpdater::InterpolateFlow5(const CInputVector& 
         throw std::out_of_range("");
     } else if (points.size() < 32) {
         std::cout << "not enough SQL points selected, " << points.size() <<" points selected\n";
+        std::cout << "LeftLow" << " | " << "LeftHigh" << " | " << "RightLow" << " | " << "RightHigh" << " | " << "ElevLow" << " | " << "ElevHigh" << " | " << "RuddLow"  << " | " << "RuddHigh"  << " | " << "AlphaLow"  << " | " << "AlphaHigh" << std::endl;
         std::cout << LeftLow << " | " << LeftHigh << " | " << RightLow << " | " << RightHigh << " | " << ElevLow << " | " << ElevHigh << " | " << RuddLow  << " | " << RuddHigh  << " | " << AlphaLow  << " | " << AlphaHigh << std::endl;
         throw std::out_of_range("");
     }
@@ -356,7 +357,7 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
                         + currentState.LinearVelocities.Y.get() 
                         * sin(currentState.AngularPositions.Yaw.get() * M_PI/180);
     double LiftForce = valueFromCoeff(coeffs.CLift.get(), airspeed);
-    double DragForce = valueFromCoeff(coeffs.CDrag.get(), airspeed);
+    double DragForce = valueFromCoeff(coeffs.CDrag.get() + fuselageDragCoeff, airspeed);
     double SideForce = -1 * valueFromCoeff(coeffs.CSideForce.get(), airspeed);
     double PitchMoment = valueFromCoeff(coeffs.CPitchMom.get(), airspeed);
     double RollMoment = valueFromCoeff(coeffs.CRollMom.get(), airspeed);
@@ -364,11 +365,16 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
 
     // Propogate forces and moments to absolute coord sys
     S6DegResultant absoluteAeroResult;
-    absoluteAeroResult.forceZ = LiftForce;
+    absoluteAeroResult.forceZ = LiftForce * cos(currentState.AngularPositions.Roll.get() * M_PI/180)
+                               + SideForce * sin(currentState.AngularPositions.Roll.get() * M_PI/180);
     absoluteAeroResult.forceX = cos(M_PI - currentState.AngularPositions.Yaw.get() * M_PI/180) * DragForce
-                                - cos(currentState.AngularPositions.Yaw.get() * M_PI/180 - M_PI / 2) * SideForce;
+                                - cos(currentState.AngularPositions.Yaw.get() * M_PI/180 - M_PI / 2) 
+                                * (LiftForce * sin(currentState.AngularPositions.Roll.get() * M_PI/180)
+                               + SideForce * cos(currentState.AngularPositions.Roll.get() * M_PI/180));
     absoluteAeroResult.forceY = -1 * sin(M_PI - currentState.AngularPositions.Yaw.get() * M_PI/180) * DragForce
-                                - sin(currentState.AngularPositions.Yaw.get() * M_PI/180 - M_PI / 2) * SideForce;
+                                - sin(currentState.AngularPositions.Yaw.get() * M_PI/180 - M_PI / 2) 
+                                * (LiftForce * sin(currentState.AngularPositions.Roll.get() * M_PI/180)
+                               + SideForce * cos(currentState.AngularPositions.Roll.get() * M_PI/180));
     absoluteAeroResult.momentX = -1 * RollMoment;
     absoluteAeroResult.momentY = -1 * PitchMoment;
     absoluteAeroResult.momentZ = YawMoment;
@@ -435,11 +441,11 @@ bool CDynamicsUpdater::UpdateStates(const CInputVector& inputs, CState& currentS
     nextState.LinearPositions.Y.set(newY);
     double newZ = currentState.LinearPositions.Z.get() + timeDelta * currentState.LinearVelocities.Z.get();
     nextState.LinearPositions.Z.set(newZ);
-    double newPitch = currentState.AngularPositions.Pitch.get() + timeDelta * currentState.AngularPositions.Pitch.get();
+    double newPitch = currentState.AngularPositions.Pitch.get() + timeDelta * currentState.AngularVelocities.Pitch.get();
     nextState.AngularPositions.Pitch.set(setAngleInNominalRange(newPitch));
-    double newRoll = currentState.AngularPositions.Roll.get() + timeDelta * currentState.AngularPositions.Roll.get();
+    double newRoll = currentState.AngularPositions.Roll.get() + timeDelta * currentState.AngularVelocities.Roll.get();
     nextState.AngularPositions.Roll.set(setAngleInNominalRange(newRoll));
-    double newYaw = currentState.AngularPositions.Yaw.get() + timeDelta * currentState.AngularPositions.Yaw.get();
+    double newYaw = currentState.AngularPositions.Yaw.get() + timeDelta * currentState.AngularVelocities.Yaw.get();
     nextState.AngularPositions.Yaw.set(setAngleInNominalRange(newYaw));
 
     // Update Velocities with net forces/moments

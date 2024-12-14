@@ -28,12 +28,15 @@ struct S6DegResultant {
 
 class CDynamicsUpdater {
 private:
+    static constexpr double fuselageDragCoeff = 0.4, fuselageArea = 3.14*0.35*0.35;
     static constexpr double airDensity = 1.225; // kg/m^3
     static constexpr double Ixx = 1.1135, Iyy = 0.91147, Izz = 2.01400; //kg*m^2
     static constexpr double Ixz = 0.03478, Ixy = 0, Iyz = 0; //kg*m^2 
     static constexpr double wingArea = 0.675; //m^2
     static constexpr double mass = 2; //kg
     static constexpr double timeDelta = 0.01; //seconds
+    static constexpr double fuselageEquivalentDragCoeff = fuselageDragCoeff * fuselageArea / wingArea;
+
 public:
     // Function to query flow5Data.db to obtain the aerodynamic reactions
     CAerodynamicCoefficients static InterpolateFlow5(const CInputVector& inputs, const CState& currentState);
